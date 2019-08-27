@@ -5,8 +5,6 @@ import CatDescription from './CatDescription';
 import CatContainer from './CatContainer';
 import Cat from './Cat';
 import _ from 'lodash';
-import { callbackify } from 'util';
-import { doesNotReject } from 'assert';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<Cat>', () => {
@@ -18,16 +16,11 @@ describe('<Cat>', () => {
     */
     it('renders a cat with an image and a description', (done) => {  
         //mock fetch     
-        const mockSuccessResponse = {data : "http://www.someUrl.com"};
-        const mockJsonPromise = Promise.resolve(mockSuccessResponse); // 2
-        const mockFetchPromise = Promise.resolve({ // 3
-        json: () => mockJsonPromise,
-        });
-        //jest.spyOn(global, 'fetch').mockImplementation(() => mockFetchPromise); // 4
-        global.fetch = jest.fn().mockImplementation(() => mockFetchPromise);
-
+        
+        
         const testDescription = "Test Description";
         const wrapper = mount(<Cat description={testDescription}></Cat>);
+        wrapper.instance.loadImage = jest.fn(() => {wrapper.instance.setImgUrl("someUrl")});
         expect(wrapper.find(".catImg")).toHaveLength(1);
         expect(wrapper.find(CatDescription)).toHaveLength(1);
         expect(wrapper.text()).toContain(testDescription);
